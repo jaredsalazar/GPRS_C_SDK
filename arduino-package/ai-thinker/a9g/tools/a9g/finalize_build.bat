@@ -12,4 +12,9 @@ if exist "%SDK_PATH%\hex\app\app_flash.lod" (
     exit /b 0
 )
 
+if exist "%SDK_PATH%\hex\app\app_flash_debug.lod" (
+    copy /Y "%SDK_PATH%\hex\app\app_flash_debug.lod" "%BUILD_PATH%\%PROJECT_NAME%.lod" >nul
+    exit /b 0
+)
+
 exit /b 1

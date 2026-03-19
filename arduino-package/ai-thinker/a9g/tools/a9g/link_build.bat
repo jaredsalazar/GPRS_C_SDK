@@ -51,6 +51,7 @@ if not "%BUILD_RESULT%"=="0" exit /b %BUILD_RESULT%
 
 if not exist "%BUILD_PATH%" mkdir "%BUILD_PATH%"
 if exist "%WORKSPACE_SDK%\hex\app\app_flash.lod" copy /Y "%WORKSPACE_SDK%\hex\app\app_flash.lod" "%BUILD_PATH%\%PROJECT_NAME%.lod" >nul
+if not exist "%BUILD_PATH%\%PROJECT_NAME%.lod" if exist "%WORKSPACE_SDK%\hex\app\app_flash_debug.lod" copy /Y "%WORKSPACE_SDK%\hex\app\app_flash_debug.lod" "%BUILD_PATH%\%PROJECT_NAME%.lod" >nul
 if exist "%WORKSPACE_SDK%\build\app\app.elf" copy /Y "%WORKSPACE_SDK%\build\app\app.elf" "%BUILD_PATH%\%PROJECT_NAME%.elf" >nul
 if exist "%WORKSPACE_SDK%\build\app\app.map" copy /Y "%WORKSPACE_SDK%\build\app\app.map" "%BUILD_PATH%\%PROJECT_NAME%.map" >nul
 
