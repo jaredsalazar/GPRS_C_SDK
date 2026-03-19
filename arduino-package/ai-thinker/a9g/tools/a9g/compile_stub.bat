@@ -28,7 +28,7 @@ if /I "%SRC_EXT%"==".S" goto stage_source
 goto finalize
 
 :stage_source
-if /I "%SRC_NAME%"=="%PROJECT_NAME%.ino.cpp" (
+if /I "%SRC_NAME:~-8%"==".ino.cpp" (
     copy /Y "%SRC%" "%GENERATED_APP_SRC%\sketch.cpp" >nul
 ) else (
     set "A9G_COMPILE_SRC=%SRC%"
