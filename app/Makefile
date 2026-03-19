@@ -11,6 +11,10 @@ LOCAL_API_DEPENDS := \
 LOCAL_ADD_INCLUDE := include\
                     include/std_inc \
                     include/api_inc \
+                    app/include \
+                    libs/gps/include \
+                    libs/gps/minmea/src \
+                    $(shell find app/include -type d 2>/dev/null) \
 
 
 # Set this to any non-null string to signal a module which 
@@ -26,7 +30,9 @@ MYCFLAGS +=
 ## ------------------------------------- ##
 ##	List all your sources here           ##
 ## ------------------------------------- ##
-C_SRC := ${notdir ${wildcard src/*.c}}
+S_SRC := $(shell find src -type f -name '*.S' 2>/dev/null | sed 's,^src/,,')
+C_SRC := $(shell find src -type f -name '*.c' 2>/dev/null | sed 's,^src/,,')
+CXX_SRC := $(shell find src -type f -name '*.cpp' 2>/dev/null | sed 's,^src/,,')
 
 ## ------------------------------------- ##
 ##  Do Not touch below this line         ##

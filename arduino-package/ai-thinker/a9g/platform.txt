@@ -1,0 +1,23 @@
+name=Ai-Thinker A9G SDK Wrapper
+version=0.1.0
+
+compiler.warning_flags=
+build.extra_flags=
+
+recipe.c.o.pattern="{runtime.platform.path}/tools/a9g/compile_stub.bat" "{source_file}" "{object_file}" "{build.path}" "{runtime.platform.path}" "{build.sdk_path}" "{build.project_name}"
+recipe.cpp.o.pattern="{runtime.platform.path}/tools/a9g/compile_stub.bat" "{source_file}" "{object_file}" "{build.path}" "{runtime.platform.path}" "{build.sdk_path}" "{build.project_name}"
+recipe.S.o.pattern="{runtime.platform.path}/tools/a9g/compile_stub.bat" "{source_file}" "{object_file}" "{build.path}" "{runtime.platform.path}" "{build.sdk_path}" "{build.project_name}"
+
+recipe.ar.pattern="{runtime.platform.path}/tools/a9g/create_archive.bat" "{archive_file_path}"
+
+recipe.c.combine.pattern="{runtime.platform.path}/tools/a9g/link_build.bat" "{build.path}" "{build.project_name}" "{runtime.platform.path}" "{build.sdk_path}" "{build.csdtk_path}"
+
+recipe.objcopy.eep.pattern=cmd /c exit 0
+recipe.objcopy.hex.pattern="{runtime.platform.path}/tools/a9g/finalize_build.bat" "{build.path}" "{build.project_name}" "{build.sdk_path}"
+
+recipe.size.pattern=cmd /c echo A9G firmware created via native SDK wrapper.
+recipe.size.regex=^$
+
+tools.a9g_uploader.cmd=upload_manual.bat
+tools.a9g_uploader.path={runtime.platform.path}/tools/a9g
+tools.a9g_uploader.upload.pattern="{path}/{cmd}" "{build.path}" "{build.project_name}" "{build.sdk_path}" "{build.csdtk_path}" "{serial.port.file}"

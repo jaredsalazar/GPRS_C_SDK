@@ -1,0 +1,14 @@
+a9gdev.name=A9G Dev Board (SDK Wrapper)
+
+a9gdev.upload.tool=a9g_uploader
+a9gdev.upload.protocol=a9g-hst
+a9gdev.upload.maximum_size=1048576
+
+a9gdev.build.mcu=rda8955
+a9gdev.build.f_cpu=312000000L
+a9gdev.build.board=A9G_DEV
+a9gdev.build.core=a9g
+a9gdev.build.variant=a9g_dev
+a9gdev.build.sdk_path=C:\\A9G\\GPRS_C_SDK
+a9gdev.build.csdtk_path=C:\\A9G\\CSDTK4.2
+
