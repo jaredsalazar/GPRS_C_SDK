@@ -30,9 +30,9 @@ MYCFLAGS +=
 ## ------------------------------------- ##
 ##	List all your sources here           ##
 ## ------------------------------------- ##
-S_SRC := $(shell find src -type f -name '*.S' 2>/dev/null | sed 's,^src/,,')
-C_SRC := $(shell find src -type f -name '*.c' 2>/dev/null | sed 's,^src/,,')
-CXX_SRC := $(shell find src -type f -name '*.cpp' 2>/dev/null | sed 's,^src/,,')
+S_SRC :=
+C_SRC := native_blink.c
+CXX_SRC :=
 
 ## ------------------------------------- ##
 ##  Do Not touch below this line         ##

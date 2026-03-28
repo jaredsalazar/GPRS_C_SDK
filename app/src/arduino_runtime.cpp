@@ -10,16 +10,13 @@
 #define ARDUINO_MAIN_TASK_PRIORITY    0
 #define ARDUINO_MAIN_TASK_NAME        "Arduino Main"
 
-#define ARDUINO_LOOP_TASK_STACK_SIZE  (2048 * 2)
-#define ARDUINO_LOOP_TASK_PRIORITY    1
-#define ARDUINO_LOOP_TASK_NAME        "Arduino Loop"
-
 static HANDLE g_mainTaskHandle = NULL;
-static HANDLE g_loopTaskHandle = NULL;
 static HANDLE g_gpsMutex = NULL;
 static HANDLE g_networkMutex = NULL;
 static bool g_setupStarted = false;
 static bool g_gpsLibraryInitialized = false;
+static GPIO_config_t g_gpioConfigs[GPIO_PIN_MAX];
+static bool g_gpioConfigured[GPIO_PIN_MAX];
 
 static uint8_t g_gpsBuffer[512];
 static uint16_t g_gpsHead = 0;
@@ -129,6 +126,9 @@ static void GpsPushBytes(const uint8_t* data, uint32_t length)
 
 void pinMode(uint8_t pin, uint8_t mode)
 {
+    if (pin >= GPIO_PIN_MAX)
+        return;
+
     GPIO_config_t config;
     config.pin = (GPIO_PIN)pin;
     config.mode = mode == OUTPUT ? GPIO_MODE_OUTPUT : GPIO_MODE_INPUT;
@@ -136,18 +136,38 @@ void pinMode(uint8_t pin, uint8_t mode)
     config.intConfig.debounce = 0;
     config.intConfig.type = GPIO_INT_TYPE_MAX;
     config.intConfig.callback = NULL;
+
+    g_gpioConfigs[pin] = config;
+    g_gpioConfigured[pin] = true;
     GPIO_Init(config);
 }
 
 void digitalWrite(uint8_t pin, uint8_t value)
 {
-    GPIO_Set((GPIO_PIN)pin, toGpioLevel(value));
+    GPIO_LEVEL level = toGpioLevel(value);
+
+    if (pin >= GPIO_PIN_MAX)
+        return;
+
+    if (!g_gpioConfigured[pin])
+        pinMode(pin, OUTPUT);
+
+    GPIO_SetLevel(g_gpioConfigs[pin], level);
 }
 
 int digitalRead(uint8_t pin)
 {
     GPIO_LEVEL level = GPIO_LEVEL_LOW;
-    if (!GPIO_Get((GPIO_PIN)pin, &level))
+
+    if (pin >= GPIO_PIN_MAX)
+        return LOW;
+
+    if (g_gpioConfigured[pin])
+    {
+        if (!GPIO_GetLevel(g_gpioConfigs[pin], &level))
+            return LOW;
+    }
+    else if (!GPIO_Get((GPIO_PIN)pin, &level))
         return LOW;
     return level == GPIO_LEVEL_HIGH ? HIGH : LOW;
 }
@@ -387,26 +407,13 @@ extern "C" Network_Status_t A9G_NetworkGetStatus(void)
     return g_networkStatus;
 }
 
-static void ArduinoLoopTask(void* param)
-{
-    (void)param;
-
-    setup();
-    while (1)
-    {
-        loop();
-        yield();
-    }
-}
-
 static void StartArduinoSketch(void)
 {
     if (g_setupStarted)
         return;
 
     g_setupStarted = true;
-    g_loopTaskHandle = OS_CreateTask(ArduinoLoopTask,
-        NULL, NULL, ARDUINO_LOOP_TASK_STACK_SIZE, ARDUINO_LOOP_TASK_PRIORITY, 0, 0, ARDUINO_LOOP_TASK_NAME);
+    setup();
 }
 
 static void HandleEvent(API_Event_t* event)
@@ -489,15 +496,22 @@ static void ArduinoMainTask(void* param)
     for (uint8_t i = 0; i < POWER_TYPE_MAX; ++i)
         PM_PowerEnable((Power_Type_t)i, true);
 
+    // Start the sketch once the task environment and power rails are up.
+    // Some boards appear not to deliver SYSTEM_READY reliably after flash reset.
+    StartArduinoSketch();
+
     while (1)
     {
-        if (OS_WaitEvent(g_mainTaskHandle, (void**)&event, OS_TIME_OUT_WAIT_FOREVER))
+        if (OS_WaitEvent(g_mainTaskHandle, (void**)&event, 50))
         {
             HandleEvent(event);
             OS_Free(event->pParam1);
             OS_Free(event->pParam2);
             OS_Free(event);
         }
+
+        loop();
+        yield();
     }
 }
 

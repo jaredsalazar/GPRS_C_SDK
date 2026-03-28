@@ -33,6 +33,7 @@ set PROFILE_FILE=%PROFILES_DIR%\%PROFILE_NAME%.cwp
 set CONFIG_FILE=%COOLTOOLS_DIR%\config.cfg
 set PROFILE_SCRIPT=%COOLTOOLS_DIR%\rbbase\%PROFILE_NAME%.rb
 set LOCAL_PROFILE_SCRIPT=%~dp0%PROFILE_NAME%.rb
+set DISMISS_SCRIPT=%~dp0dismiss_profile_selector.ps1
 
 set SERIAL_PORT_NUM=%SERIAL_PORT%
 if /I "%SERIAL_PORT_NUM:~0,3%"=="COM" set SERIAL_PORT_NUM=%SERIAL_PORT_NUM:~3%
@@ -105,7 +106,10 @@ if exist "%CSDTK_PATH%\cooltools\coolwatcher.exe" (
     if /I "%A9G_ARDUINO_NO_LAUNCH%"=="1" (
         echo A9G_ARDUINO_NO_LAUNCH is set. Skipping CoolWatcher launch.
     ) else (
-        start "" "%CSDTK_PATH%\cooltools\coolwatcher.exe"
+        start "" /D "%COOLTOOLS_DIR%" "%CSDTK_PATH%\cooltools\coolwatcher.exe"
+        if exist "%DISMISS_SCRIPT%" (
+            start "" powershell -NoProfile -ExecutionPolicy Bypass -File "%DISMISS_SCRIPT%"
+        )
     )
 )
 

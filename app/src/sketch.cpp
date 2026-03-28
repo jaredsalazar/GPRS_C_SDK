@@ -1,19 +1,26 @@
 #include "Arduino.h"
+#include "api_hal_watchdog.h"
 
 void setup(void)
 {
     Serial.begin(115200);
-    pinMode(LED_BUILTIN, OUTPUT);
-    Serial.println("A9G Arduino compatibility layer");
+    Serial2.begin(115200);
+    delay(500);
+    Serial.println("A9G serial heartbeat start");
+    Serial2.println("A9G serial2 heartbeat start");
 }
 
 void loop(void)
 {
-    digitalWrite(LED_BUILTIN, HIGH);
-    Serial.println("LED on");
-    delay(1000);
+    static unsigned long counter = 0;
 
-    digitalWrite(LED_BUILTIN, LOW);
-    Serial.println("LED off");
+    WatchDog_KeepAlive();
+
+    Serial.print("tick ");
+    Serial.println(counter++);
+
+    Serial2.print("tick ");
+    Serial2.println(counter);
+
     delay(1000);
 }

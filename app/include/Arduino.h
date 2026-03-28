@@ -37,7 +37,9 @@ extern "C" {
 #define INPUT  0x0
 #define OUTPUT 0x1
 
-#define LED_BUILTIN GPIO_PIN25
+#define LED_BUILTIN GPIO_PIN27
+#define LED_STATUS  GPIO_PIN27
+#define LED_UPLOAD  GPIO_PIN28
 #define A0 100
 #define A1 101
 
