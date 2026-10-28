@@ -1,0 +1,13 @@
+{
+  "apn": "internet",
+  "apn_user": "",
+  "apn_pass": "",
+  "broker": "tcp.ap-southeast-1.clawcloudrun.com",
+  "port": 39024,
+  "topic": "a9g/test",
+  "client_id": "a9g-01",
+  "publish_interval": 10,
+  "keepalive": 60,
+  "sensor_enabled": false,
+  "adc_channel": 0
+}
